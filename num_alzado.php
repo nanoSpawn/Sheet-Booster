@@ -31,6 +31,7 @@ $filename = $_GET['filename']?:"numeros.xml";
 $tickets_hoja = $_GET['tickets_hoja']?:1;  // Depende del montaje de impresión.
 $message = "";
 
+$numberOfElements = 0;
 	
 // Ahora vienen las comprobaciones de los campos para evitar burradas sin querer.	
 $ok = true;
@@ -38,35 +39,30 @@ $ok = true;
 if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeric($times) || !is_numeric($tickets_hoja)) {
 	$message = "Introduce valores numéricos.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$numberOfElements = 0;
 	$ok = false;
 }
 		
 if ($ok && $from > $to) {
 	$message = "El campo 'de' no debe ser mayor al campo 'a'.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$numberOfElements = 0;
 	$ok = false;
 }
 		
 if ($ok && ($from < 0 || $to < 0)) {
 	$message = "Han de ser valores positivos y mayores que 1.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$numberOfElements = 0;
 	$ok = false;
 }
 		
 if ($ok && ($length < 1 || $times < 1)) {
 	$message = "La longitud mínima ha de ser 1. Y repetirse mínimo 1 vez";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$numberOfElements = 0;
 	$ok = false;
 }
 		
 if ($ok && $tickets_hoja < 1) {
 	$message = "Debería haber al menos 1 ticket por hoja.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$numberOfElements = 0;
 	$ok = false;
 }
 
