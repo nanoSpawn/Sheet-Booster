@@ -92,9 +92,8 @@ if($ok) {
 
 	// Todo este código es para formatear el XML resultante, con line breaks, indentado, etc.
 	// Más que nada para poder aplicar estilos de parágrafo a cada línea.
-		
 	if ($formatted) {
-	$xml = new DOMDocument('1.0');
+		$xml = new DOMDocument('1.0');
 		$xml->preserveWhiteSpace = false;
 		$xml->formatOutput = true;
 		$xml->loadXML($Root->asXML());
