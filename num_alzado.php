@@ -10,9 +10,51 @@ $start = $time;
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Numeración alzada de tickets - Gràfiques Muntaner</title>
+
+<link href='http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic|Bree+Serif' rel='stylesheet' type='text/css'>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" src="js/swfobject.js"></script>
 <script type="text/javascript" src="js/downloadify.min.js"></script>
+
+<style>
+
+/*
+
+
+*/
+	body {
+		font-family: 'Asap', sans-serif;
+		font-size: 15px;
+		line-height: 1.5em;
+		color: #444;
+	}
+	
+	input, textarea {
+		font-family: 'Asap', sans-serif;
+		font-size: 15px;
+		color: #444;
+		border: dotted 2px #d2d2d2;
+		padding: 2px 6px;
+	}
+
+	h1 {
+		font-family: 'Bree Serif', serif;
+		font-size: 1.7em;
+		line-height: 1em;
+		color: #660033;
+		width: 700px;
+		border-bottom: solid 1px #ccc;	
+	}
+
+	h2 {
+		font-family: 'Bree Serif', serif;
+		font-size: 1.2em;
+		color: #666;
+		border-bottom: none;	
+	}
+
+
+</style>
 	
 </head>
 
@@ -86,15 +128,15 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 ?>
 
 <body style="font-family: Helvetica, sans-serif;" onload="load();">
-<p><strong>Numeración alzada de tickets by Gràfiques Muntaner</strong></p>
+<h1>Numeración alzada de tickets by Gràfiques Muntaner</h1>
 
-<form action="num_alzado.php" method="GET">
-<p>De 
-  <input name="from" type="text" id="from" value="<?php echo $from ?>" size="10" maxlength="10" /> 
-  a 
-  <input name="to" type="text" id="to" value="<?php echo $to ?>" size="10" maxlength="10" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Longitud <input name="length" type="text" id="length" value="<?php echo $length ?>" size="2" maxlength="10" /><br />
+<h2>Generador de números</h2>
+
+<form action="num_alzado.php" method="GET" id="generador">
+	<p>De <input name="from" type="text" id="from" value="<?php echo $from ?>" size="10" maxlength="10" /> 
+  a <input name="to" type="text" id="to" value="<?php echo $to ?>" size="10" maxlength="10" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Longitud <input name="length" type="text" id="length" value="<?php echo $length ?>" size="2" maxlength="10" /><br />
   Repetir <input name="times" type="text" id="times" value="<?php echo $times ?>" size="2" maxlength="10" /> veces <br /><br />
-  <b>Impresión</b><br />
+  <h2>Impresión</h2>
   Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="<?php echo $tickets_hoja ?>" size="10" maxlength="10" /><br />
   Número final de hojas (redondeado hacia arriba): <b><?php echo $hojas; ?></b><br /><br />
   <input type="checkbox" name="formatted" id="formatted" value="true" <?php echo isset($_GET['formatted']) ? "checked" : ""; ?>>XML con formato <br /><br />
@@ -102,7 +144,7 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
  <span style="color:red; font-weight: bold;"> <?php echo $message; ?></span>
 </p>
 
-<p><strong>Descarga de fichero con XML generado</strong></p>
+<h2>Descarga de fichero con XML generado</h2>
 Nombre del archivo a descargar: <input type="text" value="<?php echo $filename; ?>" id="filename" name="filename" />
 <p id="downloadify">
 				<i>You must have Flash 10 installed to download this file.<i>
