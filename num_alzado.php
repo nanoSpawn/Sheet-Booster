@@ -34,39 +34,23 @@ $message = "";
 $numberOfElements = 0;
 	
 // Ahora vienen las comprobaciones de los campos para evitar burradas sin querer.	
-$ok = true;
 
 if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeric($times) || !is_numeric($tickets_hoja)) {
 	$message = "Introduce valores numéricos.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$ok = false;
-}
-		
-if ($ok && $from > $to) {
+} elseif ($from > $to) {
 	$message = "El campo 'de' no debe ser mayor al campo 'a'.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$ok = false;
-}
-		
-if ($ok && ($from < 0 || $to < 0)) {
+} elseif ($from < 0 || $to < 0) {
 	$message = "Han de ser valores positivos y mayores que 1.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$ok = false;
-}
-		
-if ($ok && ($length < 1 || $times < 1)) {
+} elseif ($length < 1 || $times < 1) {
 	$message = "La longitud mínima ha de ser 1. Y repetirse mínimo 1 vez";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$ok = false;
-}
-		
-if ($ok && $tickets_hoja < 1) {
+} elseif ($tickets_hoja < 1) {
 	$message = "Debería haber al menos 1 ticket por hoja.";
 	$xml = "Arregla los valores y vuelve a probar.";
-	$ok = false;
-}
-
-if($ok) {
+} else {
 	// Una vez capturados y comprobados los valores, hacemos cálculos
 	$numberOfElements = ($to-$from+1)*$times; // Total de elementos en el XML, tiene en cuenta repeticiones y todo.
 	$total_tickets = $to-$from+1; // Total de tickets. 
