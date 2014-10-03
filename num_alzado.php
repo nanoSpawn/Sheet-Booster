@@ -20,122 +20,68 @@ $start = $time;
 <?php
 
 //Valores default por si no se establecen via GET.
-$from = 1;
-$to = 100;
-$length = 4;
-$times = 1;
-$formatted = false;
-$filename = "numeros.xml";
+$from = $_GET['from']?:1;
+$to = $_GET['to']?:100;
+$length = $_GET['length']?:4;
+$times = $_GET['times']?:1;
+$formatted = $_GET['formatted']?:false;
+$filename = $_GET['filename']?:"numeros.xml";
 
 //Valores default para la impresión
-$tickets_hoja = 1;  // Depende del montaje de impresión.
+$tickets_hoja = $_GET['tickets_hoja']?:1;  // Depende del montaje de impresión.
 $message = "";
 
-
-if (isset($_GET['from'])) { // valor por defecto del primer campo ("De") si no está establecido: 1
-	$from = $_GET['from'];
-	}
-	
-if (isset($_GET['to'])) { // valor por defecto del segundo campo ("a") si no está establecido: 100
-	$to = $_GET['to'];
-	}
-		
-if (isset($_GET['length'])) {  // valor por defecto de la longitud si no está establecida: 4
-	$length = $_GET['length'];
-	}
-	
-if (isset($_GET['times'])) { // valor por defecto del campo ("times") si no está establecido: 1. Número de veces a repetir cada número
-	$times = $_GET['times'];
-	}
-
-if (isset($_GET['tickets_hoja'])) { // valor por defecto del campo ("tickets_hoja") si no está establecido: 1. Número de tickets por hoja
-	$tickets_hoja = $_GET['tickets_hoja'];
-	}
-	
-if (isset($_GET['formatted'])) { // valor por defecto del campo ("tickets_hoja") si no está establecido: 1. Número de tickets por hoja
-	$formatted = $_GET['formatted'];
-	}
-if (isset($_GET['filename'])) { // valor por defecto del campo ("tickets_hoja") si no está establecido: 1. Número de tickets por hoja
-	$filename = $_GET['filename'];
-	}
-
+$numberOfElements = 0;
 	
 // Ahora vienen las comprobaciones de los campos para evitar burradas sin querer.	
-if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeric($times) || $from < 0 || $to < 0 || $length < 1 || $times < 1 || $from > $to || !is_numeric($tickets_hoja) || $tickets_hoja < 1 ) {
+
+if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeric($times) || !is_numeric($tickets_hoja)) {
+	$message = "Introduce valores numéricos.";
+	$xml = "Arregla los valores y vuelve a probar.";
+} elseif ($from > $to) {
+	$message = "El campo 'de' no debe ser mayor al campo 'a'.";
+	$xml = "Arregla los valores y vuelve a probar.";
+} elseif ($from < 0 || $to < 0) {
+	$message = "Han de ser valores positivos y mayores que 1.";
+	$xml = "Arregla los valores y vuelve a probar.";
+} elseif ($length < 1 || $times < 1) {
+	$message = "La longitud mínima ha de ser 1. Y repetirse mínimo 1 vez";
+	$xml = "Arregla los valores y vuelve a probar.";
+} elseif ($tickets_hoja < 1) {
+	$message = "Debería haber al menos 1 ticket por hoja.";
+	$xml = "Arregla los valores y vuelve a probar.";
+} else {
+	// Una vez capturados y comprobados los valores, hacemos cálculos
+	$numberOfElements = ($to-$from+1)*$times; // Total de elementos en el XML, tiene en cuenta repeticiones y todo.
+	$total_tickets = $to-$from+1; // Total de tickets. 
+	$hojas = ceil($total_tickets / $tickets_hoja); // Total de hojas, se redondea hacia arriba.
 		
-		if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeric($times) || !is_numeric($tickets_hoja)) {
-			$message = "Introduce valores numéricos.";
-			$xml = "Arregla los valores y vuelve a probar.";
-			$numberOfElements = 0;
-		}
+	$Root = new SimpleXMLElement('<Root/>'); // inicializamos el XML
+	$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos
 		
-		if ($from > $to) {
-			$message = "El campo 'de' no debe ser mayor al campo 'a'.";
-			$xml = "Arregla los valores y vuelve a probar.";
-			$numberOfElements = 0;
-		}
-		
-		if ($from < 0 || $to < 0) {
-			$message = "Han de ser valores positivos y mayores que 1.";
-			$xml = "Arregla los valores y vuelve a probar.";
-			$numberOfElements = 0;
-		}
-		
-		if ($length < 1 || $times < 1) {
-			$message = "La longitud mínima ha de ser 1. Y repetirse mínimo 1 vez";
-			$xml = "Arregla los valores y vuelve a probar.";
-			$numberOfElements = 0;
-		}
-		
-		if ($tickets_hoja < 1) {
-			$message = "Debería haber al menos 1 ticket por hoja.";
-			$xml = "Arregla los valores y vuelve a probar.";
-			$numberOfElements = 0;
-		}
-	}
-	
-	else {
-	
-		// Una vez capturados y comprobados los valores, hacemos cálculos
-		$numberOfElements = ($to-$from+1)*$times; // Total de elementos en el XML, tiene en cuenta repeticiones y todo.
-		$total_tickets = $to-$from+1; // Total de tickets. 
-		$hojas = ceil($total_tickets / $tickets_hoja); // Total de hojas, se redondea hacia arriba.
-		
-		$Root = new SimpleXMLElement('<Root/>'); // inicializamos el XML
-		$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos
-		
-		for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
-			for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
-				for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
-					$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
-					if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
-					$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
-					}
-				
+	for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
+		for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
+			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
+				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
+				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
+				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
 			}
+				
 		}
-
-		// Todo este código es para formatear el XML resultante, con line breaks, indentado, etc.
-		// Más que nada para poder aplicar estilos de parágrafo a cada línea.
-		
-		$xml = $Root->asXML();
-
-		if ($formatted) {
-			$xml = new DOMDocument('1.0');
-			$xml->preserveWhiteSpace = false;
-			$xml->formatOutput = true;
-			$xml->loadXML($Root->asXML());
-			$xml = $xml->saveXML();		
-		}
-		else {
-			$xml = $Root->saveXML();
-		}	
-		
 	}
 
-
-
-
+	// Todo este código es para formatear el XML resultante, con line breaks, indentado, etc.
+	// Más que nada para poder aplicar estilos de parágrafo a cada línea.
+	if ($formatted) {
+		$xml = new DOMDocument('1.0');
+		$xml->preserveWhiteSpace = false;
+		$xml->formatOutput = true;
+		$xml->loadXML($Root->asXML());
+		$xml = $xml->saveXML();		
+	} else {
+		$xml = $Root->saveXML();
+	}	
+}
 
 ?>
 
