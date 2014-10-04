@@ -27,14 +27,23 @@ $start = $time;
 		font-size: 15px;
 		line-height: 1.5em;
 		color: #444;
+		margin: 0;
+		padding: 0;
+		background: #660033;
 	}
 	
 	input, textarea {
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
 		color: #444;
-		border: dotted 2px #d2d2d2;
+		border: solid 2px #d2d2d2;
 		padding: 2px 6px;
+		-webkit-box-shadow: inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
+		-moz-box-shadow:    inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
+		box-shadow:         inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
 	}
 
 	h1 {
@@ -42,7 +51,7 @@ $start = $time;
 		font-size: 1.7em;
 		line-height: 1em;
 		color: #660033;
-		width: 700px;
+		width: 100%;
 		border-bottom: solid 1px #ccc;	
 	}
 
@@ -51,6 +60,34 @@ $start = $time;
 		font-size: 1.2em;
 		color: #666;
 		border-bottom: none;	
+	}
+
+	#container {
+		display: block;
+		margin: 20px auto;
+		padding: 30px;
+		width: 700px;
+		background: #f4f4f4;
+		-webkit-box-shadow: 0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-moz-box-shadow:    0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		box-shadow:         0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+	}
+
+	.time {
+		display: block;
+		margin: 0 auto 10px auto;
+		text-align: center;
+		color: white;
+		font-size: .6em;
+		opacity: .5;
+	}
+
+	.explanation {
+		font-size: .8em;
+		color: #777;
 	}
 
 
@@ -128,24 +165,27 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 ?>
 
 <body style="font-family: Helvetica, sans-serif;" onload="load();">
+<div id="container">
 <h1>Numeración alzada de tickets by Gràfiques Muntaner</h1>
-
 <h2>Generador de números</h2>
 
 <form action="num_alzado.php" method="GET" id="generador">
 	<p>De <input name="from" type="text" id="from" value="<?php echo $from ?>" size="10" maxlength="10" /> 
-  a <input name="to" type="text" id="to" value="<?php echo $to ?>" size="10" maxlength="10" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Longitud <input name="length" type="text" id="length" value="<?php echo $length ?>" size="2" maxlength="10" /><br />
+  a <input name="to" type="text" id="to" value="<?php echo $to ?>" size="10" maxlength="10" /><br />
+  Longitud <input name="length" type="text" id="length" value="<?php echo $length ?>" size="2" maxlength="10" /><br />
   Repetir <input name="times" type="text" id="times" value="<?php echo $times ?>" size="2" maxlength="10" /> veces <br /><br />
   <h2>Impresión</h2>
   Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="<?php echo $tickets_hoja ?>" size="10" maxlength="10" /><br />
   Número final de hojas (redondeado hacia arriba): <b><?php echo $hojas; ?></b><br /><br />
-  <input type="checkbox" name="formatted" id="formatted" value="true" <?php echo isset($_GET['formatted']) ? "checked" : ""; ?>>XML con formato <br /><br />
+  <input type="checkbox" name="formatted" id="formatted" value="true" <?php echo isset($_GET['formatted']) ? "checked" : ""; ?>>XML con formato<br />
+  <span class="explanation">Necesario para que haya line breaks en inDesign</span><br /><br />
   <input type="submit" value="Generar XML" /><br /><br />
  <span style="color:red; font-weight: bold;"> <?php echo $message; ?></span>
 </p>
 
 <h2>Descarga de fichero con XML generado</h2>
-Nombre del archivo a descargar: <input type="text" value="<?php echo $filename; ?>" id="filename" name="filename" />
+<span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
+Nombre del archivo a descargar: <input type="text" value="<?php echo $filename; ?>" id="filename" name="filename" /><br />
 <p id="downloadify">
 				<i>You must have Flash 10 installed to download this file.<i>
 			</p>
@@ -188,10 +228,12 @@ Nombre del archivo a descargar: <input type="text" value="<?php echo $filename; 
 <p>&nbsp;</p>
 <form>
 <p><strong>XML generado        </strong> Nº de elementos: <?php echo $numberOfElements; ?></p>
+<span class="explanation">Último XML generado, puedes hacer copy paste o guardarlo en archivo</span>
+
 <p>
   <label for="resultadoXML"></label>
   <textarea name="resultadoXML" cols="60" rows="25" readonly id="resultadoXML"><?php print($xml); ?></textarea>
-</p></form>
+</p></form></div>
 </body>
 </html>
 <?php
@@ -200,5 +242,5 @@ $time = explode(' ', $time);
 $time = $time[1] + $time[0];
 $finish = $time;
 $total_time = round(($finish - $start), 4);
-echo 'Page generated in '.$total_time.' seconds.';
+echo '<span class="time">Page generated in '.$total_time.' seconds.</span>';
 ?>
