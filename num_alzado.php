@@ -30,20 +30,26 @@ $start = $time;
 		margin: 0;
 		padding: 0;
 		background: #660033;
+		background-image: url('images/pattern-djwn.png');
+		background-repeat: repeat;
 	}
 	
 	input, textarea {
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
 		color: #444;
-		border: solid 2px #d2d2d2;
+		border: none;
 		padding: 2px 6px;
-		-webkit-box-shadow: inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
-		-moz-box-shadow:    inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
-		box-shadow:         inset 0px 0px 6px 0px rgba(0, 0, 0, 0.4);
-		-webkit-border-radius: 3px;
-		-moz-border-radius: 3px;
-		border-radius: 3px;
+		-webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		-moz-box-shadow:    inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		box-shadow:         inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+	}
+
+	textarea {
+		width: 680px;
 	}
 
 	h1 {
@@ -87,7 +93,23 @@ $start = $time;
 
 	.explanation {
 		font-size: .8em;
-		color: #777;
+		color: #aaa;
+	}
+
+	.error {
+		display: block;
+		padding: 15px;
+		-webkit-box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		-moz-box-shadow:    0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		box-shadow:         0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+
+		color: red;
+		background: white;
+		font-weight: bold;
+
 	}
 
 
@@ -180,7 +202,10 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
   <input type="checkbox" name="formatted" id="formatted" value="true" <?php echo isset($_GET['formatted']) ? "checked" : ""; ?>>XML con formato<br />
   <span class="explanation">Necesario para que haya line breaks en inDesign</span><br /><br />
   <input type="submit" value="Generar XML" /><br /><br />
- <span style="color:red; font-weight: bold;"> <?php echo $message; ?></span>
+  <?php if ($message<>"") {
+  	echo '<span class="error">'.$message.'</span>';
+  }
+  ?>
 </p>
 
 <h2>Descarga de fichero con XML generado</h2>
