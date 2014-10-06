@@ -162,12 +162,16 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 	$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos
 		
 	for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
-		if ($paged) {$xml = $Root->addChild('page');} // Si lo queremos paginado, añadimos el tag al xml
+		if ($paged) {$p = $xml->addChild('page');} // Si lo queremos paginado, añadimos el tag al xml
 		for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
 			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
 				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
 				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
-				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
+				if ($paged) {
+				  $n = $p->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
+				} else {
+				    $n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
+				}
 			}
 				
 		}
