@@ -125,6 +125,7 @@ $from = $_GET['from']?:1;
 $to = $_GET['to']?:100;
 $length = $_GET['length']?:4;
 $times = $_GET['times']?:1;
+$paged = $_GET['paged']?:false;
 $formatted = $_GET['formatted']?:false;
 $filename = $_GET['filename']?:"numeros.xml";
 
@@ -161,6 +162,7 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 	$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos
 		
 	for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
+		if ($paged) {$xml = $Root->addChild('page');} // Si lo queremos paginado, añadimos el tag al xml
 		for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
 			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
 				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
@@ -200,7 +202,9 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
   Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="<?php echo $tickets_hoja ?>" size="10" maxlength="10" /><br />
   Número final de hojas (redondeado hacia arriba): <b><?php echo $hojas; ?></b><br /><br />
   <input type="checkbox" name="formatted" id="formatted" value="true" <?php echo isset($_GET['formatted']) ? "checked" : ""; ?>>XML con formato<br />
-  <span class="explanation">Necesario para que haya line breaks en inDesign</span><br /><br />
+  <span class="explanation">Necesario para que haya line breaks en inDesign</span><br />
+  <input type="checkbox" name="paged" id="paged" value="true" <?php echo isset($_GET['paged']) ? "checked" : ""; ?>>XML paginado<br />
+  <span class="explanation">Para separar el XML también por páginas</span><br /><br />
   <input type="submit" value="Generar XML" /><br /><br />
   <?php if ($message<>"") {
   	echo '<span class="error">'.$message.'</span>';
@@ -252,7 +256,7 @@ Nombre del archivo a descargar: <input type="text" value="<?php echo $filename; 
 
 <p>&nbsp;</p>
 <form>
-<p><strong>XML generado        </strong> Nº de elementos: <?php echo $numberOfElements; ?></p>
+<p><strong>XML generado        </strong> Nº de elementos: <?php echo $numberOfElements; ?></p>
 <span class="explanation">Último XML generado, puedes hacer copy paste o guardarlo en archivo</span>
 
 <p>
