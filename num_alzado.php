@@ -1,14 +1,20 @@
 <?php
+
+/*ini_set('display_errors', 'On');
+error_reporting(E_ALL);*/
+
 $time = microtime();
 $time = explode(' ', $time);
 $time = $time[1] + $time[0];
 $start = $time;
+
 ?>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Numeración alzada de tickets - Gràfiques Muntaner</title>
 
 <link href='http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic|Bree+Serif' rel='stylesheet' type='text/css'>
@@ -22,11 +28,15 @@ $start = $time;
 
 
 */
+	html {
+		min-width: 530px;
+	}
 	body {
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
 		line-height: 1.5em;
-		color: #444;
+		color: white;
+		font-weight: bold;
 		margin: 0;
 		padding: 0;
 		background: #660033;
@@ -49,7 +59,7 @@ $start = $time;
 	}
 
 	textarea {
-		width: 680px;
+		width: 480px;
 	}
 
 	h1 {
@@ -70,9 +80,11 @@ $start = $time;
 
 	#container {
 		display: block;
+		color: #444;
+		font-weight: normal;
 		margin: 20px auto;
 		padding: 30px;
-		width: 700px;
+		width: 500px;
 		background: #f4f4f4;
 		-webkit-box-shadow: 0px 0px 30px 3px rgba(0, 0, 0, 0.75);
 		-moz-box-shadow:    0px 0px 30px 3px rgba(0, 0, 0, 0.75);
@@ -159,23 +171,28 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 	$hojas = ceil($total_tickets / $tickets_hoja); // Total de hojas, se redondea hacia arriba.
 		
 	$Root = new SimpleXMLElement('<Root/>'); // inicializamos el XML
-	$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos
+	
+	if (!$paged) {
+			$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos si no está paginado
+	} 
 		
 	for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
-		if ($paged) {$p = $xml->addChild('page');} // Si lo queremos paginado, añadimos el tag al xml
+		
+		if ($paged) {
+			$xml = $Root->addChild('page'); 
+			$xml->addAttribute('number', $h); // Si lo queremos paginado, añadimos tags numerados
+			} 
+			
 		for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
 			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
 				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
 				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
-				if ($paged) {
-				  $n = $p->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
-				} else {
-				    $n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
+				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
 				}
 			}
 				
 		}
-	}
+	
 
 	// Todo este código es para formatear el XML resultante, con line breaks, indentado, etc.
 	// Más que nada para poder aplicar estilos de parágrafo a cada línea.
@@ -194,7 +211,7 @@ if (!is_numeric($from) || !is_numeric($to) || !is_numeric($length) || !is_numeri
 
 <body style="font-family: Helvetica, sans-serif;" onload="load();">
 <div id="container">
-<h1>Numeración alzada de tickets by Gràfiques Muntaner</h1>
+<h1>Numeración alzada de tickets</h1>
 <h2>Generador de números</h2>
 
 <form action="num_alzado.php" method="GET" id="generador">
