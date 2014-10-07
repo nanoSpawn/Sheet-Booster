@@ -145,15 +145,6 @@ function fillForm(values) {
   $("#tickets_hoja").val(values.tickets_hoja);
 }
 
-function addLineBreak(string, value) {
-  if (value) {
-    string = string + "\n";
-    return string;
-  } else {
-    return string;
-  }
-}
-
 function generateXML(values) {
 /*$numberOfElements = ($to-$from+1)*$times; // Total de elementos en el XML, tiene en cuenta repeticiones y todo.
 	$total_tickets = $to-$from+1; // Total de tickets. 
@@ -186,47 +177,73 @@ var foo = xmlDocument.createElement('foo');
 foo.appendChild(document.createTextNode('bar'));
 xmlDocument.documentElement.appendChild(foo);
  */
-  var total_tickets = values.to - values.from + 1;
+ 
+ 
+ var total_tickets = values.to - values.from + 1;
   var numberOfElements = total_tickets * values.times;
   var hojas = Math.ceil(total_tickets / values.tickets_hoja);
   
-  var $xml = '<?xml version="1.0"?>';
-  $xml = addLineBreak($xml, values.formatted);
-  $xml = $xml + "<Root>";
-    $xml = addLineBreak($xml, values.formatted);
+  if (values.formatted) {
+      var $lb = "\n";
+  } else {
+      var $lb = "";
+  }
+  
+  var $xml = '<?xml version="1.0"?>' + $lb;
+  $xml = $xml + "<Root>" + $lb;
 
   
   if (!values.paged) {
-   $xml = $xml + "<xml>";
-   $xml = addLineBreak($xml, values.formatted);
+   $xml = $xml + "<xml>" + $lb;
   }
   
   for (var $h = 1; $h <= hojas; $h++ ) {
     if (values.paged) {
-      $xml=$xml + "<page number='" + $h + "'>";
-      $xml = addLineBreak($xml, values.formatted);
+      $xml=$xml + "<page number='" + $h + "'>" + $lb;
     }
     
     // Code here
+    /*
+    	for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
+			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
+				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
+				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
+				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
+				}
+			}
+			
+    */
+	for (var $i = 0; $i < values.tickets_hoja; $i++) {
+	  for (var $t = 1; $t <= values.times; $t++) {
+	    var $j = $h + (values.from -1) + (hojas * $i);
+	    $j = pad($j, values.length); //add zeroes
+	    if ($j > values.to) { $j = " ";} // scrap calculated numbers bigger than the one in the "to" textbox
+	    $xml =  $xml + "<n" + $t + ">" + $j + "</n" + $t + ">" + $lb;
+	  }
+	}
     
     
     if (values.paged) {
-      $xml=$xml + "</page>";
-      $xml = addLineBreak($xml, values.formatted);
+      $xml=$xml + "</page>" + $lb;
     }
   }
   
   if (!values.paged) {
-    $xml = $xml + "</xml>";
-    $xml = addLineBreak($xml, values.formatted);
+    $xml = $xml + "</xml>" + $lb;
    }
   
-  $xml = $xml + "</Root>";
-  $xml = addLineBreak($xml, values.formatted);
+  $xml = $xml + "</Root>" + $lb;
   $xml = $xml + "</xml>";
   
    $("#resultadoXML").val($xml);
 }
+
+function pad (str, max) { 
+  str=str.toString(); 
+  function main(str,max){ 
+    return str.length < max ? main("0" + str, max) : str; } 
+    return main(str,max); 
+   }
 
 $(document).ready(function(){
   fillForm(values);
