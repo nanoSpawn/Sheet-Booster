@@ -116,6 +116,13 @@
 		font-weight: bold;
 
 	}
+	.warning {
+	      font-weight: bold;
+	      color: red;
+	      -webkit-box-shadow: inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
+		-moz-box-shadow:    inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
+		box-shadow:         inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
+	}
 
 
 </style>
@@ -172,6 +179,7 @@ function getForm(values) {
   return values;
 }
 
+
 // Function that generates the XML from the specified values, passed via an object
 function generateXML(values) {
  
@@ -226,13 +234,39 @@ function pad (str, max) {
    }
 
 $(document).ready(function(){
+
+  var $error = false;
   fillForm(values);
   generateXML(values);
   
   $("#generador").on('submit', function() {
-      event.preventDefault();
-      values = getForm(values);
-      generateXML(values);
+      if ($error) {
+	event.preventDefault();
+      } else {
+	event.preventDefault();
+	values = getForm(values);
+	generateXML(values); }
+  })
+  
+  $("#from").change(function() {
+    if (jQuery.isNumeric($("#from").val()) == false) {
+      $(this).addClass("warning");
+      $(".error").text("Debe ser un valor numérico");
+      $error = true;
+    } else {
+      $("#from.warning").removeClass("warning");
+      $(".error").text("");
+      $error = false;
+    }
+    if ($("#from").val() > $("#to").val()) {
+      $("#from, #to").addClass("warning");
+      $(".error").text("El campo DE debe ser siempre menor que el campo A");
+      $error = true;
+    } else {
+      $("#from.warning, #to.warning").removeClass("warning");
+      $(".error").text("");
+      $error = false;
+    }
   })
 });
 
