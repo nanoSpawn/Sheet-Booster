@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Numeración alzada de tickets - Gràfiques Muntaner</title>
+
+<link href='http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic|Bree+Serif' rel='stylesheet' type='text/css'>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/swfobject.js"></script>
+<script type="text/javascript" src="js/downloadify.min.js"></script>
+
+<style>
+
+/*
+
+
+*/
+	html {
+		min-width: 530px;
+	}
+	body {
+		font-family: 'Asap', sans-serif;
+		font-size: 15px;
+		line-height: 1.5em;
+		color: white;
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
+		background: #660033;
+		background-image: url('images/pattern-djwn.png');
+		background-repeat: repeat;
+	}
+	
+	input, textarea {
+		font-family: 'Asap', sans-serif;
+		font-size: 15px;
+		color: #444;
+		border: none;
+		padding: 2px 6px;
+		-webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		-moz-box-shadow:    inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		box-shadow:         inset 0px 0px 5px 0px rgba(0, 0, 0, 0.35);
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+	}
+	
+	input[type=submit] {
+		cursor: pointer;
+	}
+
+	textarea {
+		width: 480px;
+		max-width: 480px;
+	}
+
+	h1 {
+		font-family: 'Bree Serif', serif;
+		font-size: 1.7em;
+		line-height: 1em;
+		color: #660033;
+		width: 100%;
+		border-bottom: solid 1px #ccc;	
+	}
+
+	h2 {
+		font-family: 'Bree Serif', serif;
+		font-size: 1.2em;
+		color: #666;
+		border-bottom: none;	
+	}
+
+	#container {
+		display: block;
+		color: #444;
+		font-weight: normal;
+		margin: 20px auto;
+		padding: 30px;
+		width: 500px;
+		background: #f4f4f4;
+		-webkit-box-shadow: 0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-moz-box-shadow:    0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		box-shadow:         0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+	}
+
+	.time {
+		display: block;
+		margin: 0 auto 10px auto;
+		text-align: center;
+		color: white;
+		font-size: .6em;
+		opacity: .5;
+	}
+
+	.explanation {
+		font-size: .8em;
+		color: #aaa;
+	}
+
+	.error {
+		display: block;
+		padding: 15px;
+		-webkit-box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		-moz-box-shadow:    0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		box-shadow:         0px 0px 10px 3px rgba(0, 0, 0, 0.35);
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+
+		color: red;
+		background: white;
+		font-weight: bold;
+
+	}
+
+
+</style>
+
+<script type="text/javascript">
+//Defining default values for the form
+
+var defaultValues = '{"from":"1", "to":"100", "length":"5", "times":"1", "paged":true, "formatted":true, "filename":"numeros.xml", "tickets_hoja":"1", "number_of_elements":"0"}';
+var values = jQuery.parseJSON(defaultValues);
+
+function fillForm(values) {
+  $("#from").val(values.from);
+  $("#to").val(values.to);
+  $("#length").val(values.length);
+  $("#times").val(values.times);
+  if (values.paged) {
+      $("#paged").attr("checked", true).val(true);
+   } else {
+      $("#paged").attr("checked", false).val(false);
+   }
+  if (values.formatted==true) {
+      $("#formatted").attr("checked", true).val(true);
+   } else {
+      $("#formatted").attr("checked", false).val(false);
+   }
+  $("#filename").val(values.filename);
+  $("#tickets_hoja").val(values.tickets_hoja);
+}
+
+function generateXML(values) {
+/* */
+
+}
+
+$(document).ready(function(){
+  fillForm(values);
+  });
+
+</script>
+	
+</head>
+
+
+
+<body style="font-family: Helvetica, sans-serif;" onload="load();">
+<div id="container">
+<h1>Numeración alzada de tickets</h1>
+<h2>Generador de números</h2>
+
+<form action="num_alzado.php" method="GET" id="generador">
+	<p>De <input name="from" type="text" id="from" value="" size="10" maxlength="10" /> 
+  a <input name="to" type="text" id="to" value="" size="10" maxlength="10" /><br />
+  Longitud <input name="length" type="text" id="length" value="" size="2" maxlength="10" /><br />
+  Repetir <input name="times" type="text" id="times" value="" size="2" maxlength="10" /> veces <br /><br />
+  <h2>Impresión</h2>
+  Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="" size="10" maxlength="10" /><br />
+  Número final de hojas (redondeado hacia arriba): <b></b><br /><br />
+  <input type="checkbox" name="formatted" id="formatted" value="true">XML con formato<br />
+  <span class="explanation">Necesario para que haya line breaks en inDesign</span><br />
+  <input type="checkbox" name="paged" id="paged" value="true">XML paginado<br />
+  <span class="explanation">Para separar el XML también por páginas</span><br /><br />
+  <input type="submit" value="Generar XML" /><br /><br />
+  <span class="error"></span>
+
+</p>
+
+<h2>Descarga de fichero con XML generado</h2>
+<span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
+Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" /><br />
+<p id="downloadify">
+				<i>You must have Flash 10 installed to download this file.<i>
+			</p>
+			
+
+
+</form>
+
+<script type="text/javascript">
+			function load(){
+				Downloadify.create('downloadify',{
+					filename: function(){
+						return document.getElementById('filename').value;
+					},
+					data: function(){ 
+						return document.getElementById('resultadoXML').value;
+					},
+					onComplete: function(){ alert('¡Archivo guardado!'); },
+					onCancel: function(){ alert('Descarga cancelada.'); },
+					onError: function(){ alert('El contenido del fichero no puede ser nulo.'); },
+					swf: 'media/downloadify.swf',
+					downloadImage: 'images/download.png',
+					width: 100,
+					height: 18,
+					transparent: true,
+					append: false
+				});
+			}
+		</script>
+
+
+
+
+
+<p>&nbsp;</p>
+<form>
+<p><strong>XML generado        </strong> Nº de elementos:</p>
+<span class="explanation">Último XML generado, puedes hacer copy paste o guardarlo en archivo</span>
+
+<p>
+  <label for="resultadoXML"></label>
+  <textarea name="resultadoXML" cols="60" rows="25" readonly id="resultadoXML"></textarea>
+</p></form></div>
+</body>
+</html>
