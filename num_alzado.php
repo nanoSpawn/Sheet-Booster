@@ -57,9 +57,14 @@ $start = $time;
 		-moz-border-radius: 5px;
 		border-radius: 5px;
 	}
+	
+	input[type=submit] {
+		cursor: pointer;
+	}
 
 	textarea {
 		width: 480px;
+		max-width: 480px;
 	}
 
 	h1 {
