@@ -123,14 +123,18 @@
 <script type="text/javascript">
 //Defining default values for the form
 
-var defaultValues = '{"from":"1", "to":"100", "length":"5", "times":"1", "paged":true, "formatted":true, "filename":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
+var defaultValues = '{"from":"1", "to":"100", "length":"5", "times":"2", "paged":true, "formatted":true, "filename":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
 var values = jQuery.parseJSON(defaultValues);
 
+// Function that fills the form elements with the current values
+// Starting with default hardcoded values
 function fillForm(values) {
   $("#from").val(values.from);
   $("#to").val(values.to);
   $("#length").val(values.length);
   $("#times").val(values.times);
+  $("#filename").val(values.filename);
+  $("#tickets_hoja").val(values.tickets_hoja);
   if (values.paged) {
       $("#paged").attr("checked", true).val(true);
    } else {
@@ -141,94 +145,70 @@ function fillForm(values) {
    } else {
       $("#formatted").attr("checked", false).val(false);
    }
-  $("#filename").val(values.filename);
-  $("#tickets_hoja").val(values.tickets_hoja);
 }
 
-function generateXML(values) {
-/*$numberOfElements = ($to-$from+1)*$times; // Total de elementos en el XML, tiene en cuenta repeticiones y todo.
-	$total_tickets = $to-$from+1; // Total de tickets. 
-	$hojas = ceil($total_tickets / $tickets_hoja); // Total de hojas, se redondea hacia arriba.
-		
-	$Root = new SimpleXMLElement('<Root/>'); // inicializamos el XML
-	
-	if (!$paged) {
-			$xml = $Root->addChild('xml');  // Añadimos el hijo xml, que será el padre de todos si no está paginado
-	} 
-		
-	for ($h = 1; $h <= $hojas; $h++) {  // Iteramos entre todas las hojas
-		
-		if ($paged) {
-			$xml = $Root->addChild('page'); 
-			$xml->addAttribute('number', $h); // Si lo queremos paginado, añadimos tags numerados
-			} 
-			
-		for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
-			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
-				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
-				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
-				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
-				}
-			}
-				
-		}
-	var xmlDocument = $.parseXML("<root/>");
-var foo = xmlDocument.createElement('foo');
-foo.appendChild(document.createTextNode('bar'));
-xmlDocument.documentElement.appendChild(foo);
- */
- 
- 
- var total_tickets = values.to - values.from + 1;
-  var numberOfElements = total_tickets * values.times;
-  var hojas = Math.ceil(total_tickets / values.tickets_hoja);
+// Gets the form current values, returns an object
+function getForm(values) {
+  values.from = $("#from").val();
+  values.to = $("#to").val();
+  values.length = $("#length").val();
+  values.times = $("#times").val();
+  values.filename = $("#filename").val();
+  values.tickets_hoja = $("#tickets_hoja").val();
   
-  if (values.formatted) {
+  if ($("#paged").prop("checked")) {
+    values.paged = true;
+  }
+  else {
+    values.paged = false;
+  }
+  if ($("#formatted").prop("checked")) {
+    values.formatted = true;
+  }
+  else {
+    values.formatted = false;
+  }
+  
+  return values;
+}
+
+// Function that generates the XML from the specified values, passed via an object
+function generateXML(values) {
+ 
+  var total_tickets = values.to - values.from + 1; // Total number of tickets to print
+  var numberOfElements = total_tickets * values.times; // Total number of elements in the XML
+  var hojas = Math.ceil(total_tickets / values.tickets_hoja); // Total number of sheets
+  
+  if (values.formatted) { // Sets the line break if formatted is true
       var $lb = "\n";
   } else {
       var $lb = "";
   }
   
-  var $xml = '<?xml version="1.0"?>' + $lb;
-  $xml = $xml + "<Root>" + $lb;
-
+  var $xml = '<?xml version="1.0"?>' + $lb + '<Root>' + $lb;
   
-  if (!values.paged) {
+  if (!values.paged) { // If we don't want pages, tree will be Root->xml->n
    $xml = $xml + "<xml>" + $lb;
   }
   
-  for (var $h = 1; $h <= hojas; $h++ ) {
+  for (var $h = 1; $h <= hojas; $h++ ) { // iterating through the sheets
     if (values.paged) {
       $xml=$xml + "<page number='" + $h + "'>" + $lb;
     }
-    
-    // Code here
-    /*
-    	for ($i = 0; $i < $tickets_hoja; $i++) {  // Ahora entre los tickets de cada hoja
-			for ($t = 1; $t <= $times; $t++) { // bucle para repetir $times veces cada número
-				$j = str_pad($h + ($from-1) + ($hojas * $i), $length, '0', STR_PAD_LEFT); // Número calculado. Añadimos ceros.
-				if ($j > $to) {$j = ' ';} // Para que no salgan números mayores que el máximo. Salen los tickets en blanco.
-				$n = $xml->addChild('n'.$t, $j); //  Las etiquetas son n1, n2...
-				}
-			}
-			
-    */
-	for (var $i = 0; $i < values.tickets_hoja; $i++) {
-	  for (var $t = 1; $t <= values.times; $t++) {
+    for (var $i = 0; $i < values.tickets_hoja; $i++) { // iterating through tickets
+	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
 	    var $j = $h + (values.from -1) + (hojas * $i);
 	    $j = pad($j, values.length); //add zeroes
 	    if ($j > values.to) { $j = " ";} // scrap calculated numbers bigger than the one in the "to" textbox
 	    $xml =  $xml + "<n" + $t + ">" + $j + "</n" + $t + ">" + $lb;
 	  }
-	}
-    
-    
-    if (values.paged) {
+    }
+    if (values.paged) { // Closing tags if needed to.
       $xml=$xml + "</page>" + $lb;
     }
   }
   
-  if (!values.paged) {
+  if (!values.paged) { // Closing tags if needed to.
     $xml = $xml + "</xml>" + $lb;
    }
   
@@ -248,7 +228,13 @@ function pad (str, max) {
 $(document).ready(function(){
   fillForm(values);
   generateXML(values);
-  });
+  
+  $("#generador").on('submit', function() {
+      event.preventDefault();
+      values = getForm(values);
+      generateXML(values);
+  })
+});
 
 </script>
 	
@@ -261,7 +247,7 @@ $(document).ready(function(){
 <h1>Numeración alzada de tickets</h1>
 <h2>Generador de números</h2>
 
-<form action="num_alzado.php" method="GET" id="generador">
+<form id="generador">
 	<p>De <input name="from" type="text" id="from" value="" size="10" maxlength="10" /> 
   a <input name="to" type="text" id="to" value="" size="10" maxlength="10" /><br />
   Longitud <input name="length" type="text" id="length" value="" size="2" maxlength="10" /><br />
