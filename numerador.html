@@ -131,10 +131,10 @@
 
 	.time {
 		display: block;
+		clear: both;
 		margin: 0 auto 10px auto;
 		text-align: center;
-		color: white;
-		font-size: .6em;
+		font-size: .8em;
 		opacity: .5;
 	}
 
@@ -191,7 +191,7 @@
 <script type="text/javascript">
 //Defining default values for the form
 
-var defaultValues = '{"from":"1", "to":"100", "length":"5", "times":"2", "paged":true, "formatted":true, "filename":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
+var defaultValues = '{"from":"1", "to":"100", "numberLength":"5", "times":"2", "paged":false, "formatted":true, "fileName":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
 var values = jQuery.parseJSON(defaultValues);
 
 // Function that fills the form elements with the current values
@@ -199,16 +199,16 @@ var values = jQuery.parseJSON(defaultValues);
 function fillForm(values) {
   $("#from").val(values.from);
   $("#to").val(values.to);
-  $("#length").val(values.length);
+  $("#length").val(values.numberLength);
   $("#times").val(values.times);
-  $("#filename").val(values.filename);
+  $("#filename").val(values.fileName);
   $("#tickets_hoja").val(values.tickets_hoja);
   if (values.paged) {
       $("#paged").attr("checked", true).val(true);
    } else {
       $("#paged").attr("checked", false).val(false);
    }
-  if (values.formatted==true) {
+  if (values.formatted) {
       $("#formatted").attr("checked", true).val(true);
    } else {
       $("#formatted").attr("checked", false).val(false);
@@ -219,9 +219,9 @@ function fillForm(values) {
 function getForm(values) {
   values.from = $("#from").val();
   values.to = $("#to").val();
-  values.length = $("#length").val();
+  values.numberLength = $("#length").val();
   values.times = $("#times").val();
-  values.filename = $("#filename").val();
+  values.fileName = $("#filename").val();
   values.tickets_hoja = $("#tickets_hoja").val();
   
   if ($("#paged").prop("checked")) {
@@ -243,6 +243,11 @@ function getForm(values) {
 
 // Function that generates the XML from the specified values, passed via an object
 function generateXML(values) {
+
+  
+  var start = new Date().getTime(); // To calculate time
+  $("#hojas").text("");
+	$("#numberOfElements").text("");	
  
   var total_tickets = values.to - values.from + 1; // Total number of tickets to print
   var numberOfElements = total_tickets * values.times; // Total number of elements in the XML
@@ -270,8 +275,11 @@ function generateXML(values) {
     for (var $i = 0; $i < values.tickets_hoja; $i++) { // iterating through tickets
 	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
 	    var $j = $h + (values.from -1) + (hojas * $i);
-	    $j = pad($j, values.length); //add zeroes
-	    if ($j > values.to) { $j = " ";} // scrap calculated numbers bigger than the one in the "to" textbox
+	    if ($j > values.to) { // scrap calculated numbers bigger than the one in the "to" textbox
+	    	$j = " "; 
+	    } else {
+	    	$j = pad($j, values.numberLength); //add zeroes
+	    }
 	    $xml =  $xml + "<n" + $t + ">" + $j + "</n" + $t + ">" + $lb;
 	  }
     }
@@ -288,6 +296,10 @@ function generateXML(values) {
   $xml = $xml + "</xml>";
   
    $("#resultadoXML").val($xml);
+
+  	var end = new Date().getTime();
+	var time = end - start;
+	$(".time").text("Tiempo usado para generar el XML: "+ time + " ms.");
 }
 
 function pad (str, max) { //Function that adds zeroes to the left of the number
@@ -312,12 +324,9 @@ $(document).ready(function(){
   generateXML(values);
   
   $("#generador").on('submit', function() {
-      if ($error) {
-	event.preventDefault();
-      } else {
-	event.preventDefault();
+     event.preventDefault();
 	values = getForm(values);
-	generateXML(values); }
+	generateXML(values);
   });
 
   $("#from").on("change", function() {
@@ -332,7 +341,7 @@ $(document).ready(function(){
 
 $("#downloadFile").on("click", function() {
 		var blob = new Blob([$("#resultadoXML").val()], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, values.filename);
+		saveAs(blob, $("#filename").val());
 	});
 });
 
@@ -367,7 +376,7 @@ $("#downloadFile").on("click", function() {
 
 <h2>Descarga de fichero con XML generado</h2>
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
-Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required /><br /><br />
+Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required pattern="([^\s]+(\.(?i)(xml))$)" /><br /><br />
 <!-- <p id="downloadify">
 				<i>You must have Flash 10 installed to download this file.</i>
 			</p> -->
@@ -409,7 +418,7 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 <p>
   <label for="resultadoXML"></label>
   <textarea name="resultadoXML" cols="60" rows="25" readonly id="resultadoXML"></textarea>
-</p></form></div>
+</p><span class="time"></span></form></div>
 </div>
 </body>
 </html>
