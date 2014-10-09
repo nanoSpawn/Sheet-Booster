@@ -9,6 +9,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="js/swfobject.js"></script>
 <script type="text/javascript" src="js/downloadify.min.js"></script>
+<script type="text/javascript" src="http://www.muntanercomunicacio.com/FileSaver.min.js"></script>
+<script type="text/javascript" src="http://www.muntanercomunicacio.com/blob.js"></script>
 
 <style>
 
@@ -32,7 +34,7 @@
 		background-repeat: repeat;
 	}
 	
-	input, textarea {
+	input, textarea, #downloadFile {
 		width: 4em;
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
@@ -47,13 +49,21 @@
 		border-radius: 5px;
 	}
 	
-	input[type=submit] {
+	input[type=submit], #downloadFile {
 		cursor: pointer;
+		background-color: buttonface;
 		width: auto;
 	}
 
+	input[type=submit]:active, #downloadFile:active {
+		outline: #4D90FE;
+	}
 	input[type=checkbox] {
 		width: auto;
+	}
+
+	#filename {
+		width: 9em;
 	}
 
 	textarea {
@@ -298,7 +308,6 @@ function refreshCalculatedData(values) { // Simply prints the useful data
 
 $(document).ready(function(){
 
-  var $error = false;
   fillForm(values);
   generateXML(values);
   
@@ -320,6 +329,11 @@ $(document).ready(function(){
   		var val = $(this).val()
   		$("#from").attr("max", val);
   });
+
+$("#downloadFile").on("click", function() {
+		var blob = new Blob([$("#resultadoXML").val()], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, values.filename);
+	});
 });
 
 </script>
@@ -328,7 +342,7 @@ $(document).ready(function(){
 
 
 
-<body style="font-family: Helvetica, sans-serif;" onload="load();">
+<body style="font-family: Helvetica, sans-serif;">
 <div id="container">
 <div id="formularies">
 <h1>Numeración alzada de tickets</h1>
@@ -353,17 +367,18 @@ $(document).ready(function(){
 
 <h2>Descarga de fichero con XML generado</h2>
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
-Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required /><br />
-<p id="downloadify">
+Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required /><br /><br />
+<!-- <p id="downloadify">
 				<i>You must have Flash 10 installed to download this file.</i>
-			</p>
+			</p> -->
+<a id="downloadFile">¡Descargar!</a>
 			
 
 
 </form>
 
 <script type="text/javascript">
-			function load(){
+		/*	function load(){
 				Downloadify.create('downloadify',{
 					filename: function(){
 						return document.getElementById('filename').value;
@@ -381,7 +396,7 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 					transparent: true,
 					append: false
 				});
-			}
+			} */
 		</script>
 	</div>
 
