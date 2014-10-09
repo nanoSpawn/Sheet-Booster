@@ -51,8 +51,9 @@
 	}
 
 	textarea {
-		width: 480px;
-		max-width: 480px;
+		width: 380px;
+		max-width: 380px;
+		max-height: 520px;
 	}
 
 	h1 {
@@ -73,6 +74,15 @@
 
 	#container {
 		display: block;
+		margin: 20px auto;
+		width: 920px;
+		vertical-align: middle;
+	}
+	
+	#formularies, #results {
+		display: block;
+		position: relative;
+		float: left;
 		color: #444;
 		font-weight: normal;
 		margin: 20px auto;
@@ -85,6 +95,18 @@
 		-webkit-border-radius: 10px;
 		-moz-border-radius: 10px;
 		border-radius: 10px;
+	}
+	
+	#formularies {
+		width: 400px;
+		z-index: 10;
+	}
+	#results {
+	width: 400px;
+	margin-left: -100px;
+	padding-left: 130px;
+	z-index: 1;
+		
 	}
 
 	.time {
@@ -278,6 +300,7 @@ $(document).ready(function(){
 
 <body style="font-family: Helvetica, sans-serif;" onload="load();">
 <div id="container">
+<div id="formularies">
 <h1>Numeración alzada de tickets</h1>
 <h2>Generador de números</h2>
 
@@ -288,7 +311,7 @@ $(document).ready(function(){
   Repetir <input name="times" type="text" id="times" value="" size="2" maxlength="10" /> veces <br /><br />
   <h2>Impresión</h2>
   Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="" size="10" maxlength="10" /><br />
-  Número final de hojas (redondeado hacia arriba): <b></b><br /><br />
+  Número final de hojas (redondeado hacia arriba): <b id="tickets_per_sheet"></b><br /><br />
   <input type="checkbox" name="formatted" id="formatted" value="true">XML con formato<br />
   <span class="explanation">Necesario para que haya line breaks en inDesign</span><br />
   <input type="checkbox" name="paged" id="paged" value="true">XML paginado<br />
@@ -302,7 +325,7 @@ $(document).ready(function(){
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
 Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" /><br />
 <p id="downloadify">
-				<i>You must have Flash 10 installed to download this file.<i>
+				<i>You must have Flash 10 installed to download this file.</i>
 			</p>
 			
 
@@ -330,13 +353,11 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 				});
 			}
 		</script>
+	</div>
 
-
-
-
-
-<p>&nbsp;</p>
+<div id="results">
 <form>
+
 <p><strong>XML generado        </strong> Nº de elementos:</p>
 <span class="explanation">Último XML generado, puedes hacer copy paste o guardarlo en archivo</span>
 
@@ -344,5 +365,6 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
   <label for="resultadoXML"></label>
   <textarea name="resultadoXML" cols="60" rows="25" readonly id="resultadoXML"></textarea>
 </p></form></div>
+</div>
 </body>
 </html>
