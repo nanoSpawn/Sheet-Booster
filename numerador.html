@@ -33,6 +33,7 @@
 	}
 	
 	input, textarea {
+		width: 4em;
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
 		color: #444;
@@ -48,14 +49,23 @@
 	
 	input[type=submit] {
 		cursor: pointer;
+		width: auto;
+	}
+
+	input[type=checkbox] {
+		width: auto;
 	}
 
 	textarea {
 		width: 380px;
 		max-width: 380px;
-		max-height: 520px;
+		max-height: 450px;
+		height: 450px;
 	}
 
+	#length, #times, #tickets_hoja {
+		width: 2em;
+	}
 	h1 {
 		font-family: 'Bree Serif', serif;
 		font-size: 1.7em;
@@ -147,6 +157,24 @@
 		box-shadow:         inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
 	}
 
+	@media (max-width: 900px) {
+
+		#container {
+			width: 460px;
+		}
+
+		#results {
+			padding-left: 30px;
+			margin-left: 0;
+			margin: 20px 0 0 0;
+			float: none;
+		}
+
+		#formularies {
+			margin: 0 0 20px 0;
+		}
+	}
+
 
 </style>
 
@@ -227,7 +255,7 @@ function generateXML(values) {
   
   for (var $h = 1; $h <= hojas; $h++ ) { // iterating through the sheets
     if (values.paged) {
-      $xml=$xml + "<page number='" + $h + "'>" + $lb;
+      $xml=$xml + '<page number="' + $h + '">' + $lb;
     }
     for (var $i = 0; $i < values.tickets_hoja; $i++) { // iterating through tickets
 	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
@@ -268,19 +296,6 @@ function refreshCalculatedData(values) { // Simply prints the useful data
 	$("#numberOfElements").text($numberOfElements);	
 }
 
-function error(error, message) {
-	  /*console.log('Error '+ $error);
-      console.log('Message '+ $message);*/
-	/*if (error) {
-		$("#error:hidden").text($message).slideDown();
-		$("#error:visible").text($message);
-	} else {
-		$("#error").slideUp('fast', function(){
-			$(this).text("");	
-		});
-	}*/
-}
-
 $(document).ready(function(){
 
   var $error = false;
@@ -295,28 +310,16 @@ $(document).ready(function(){
 	values = getForm(values);
 	generateXML(values); }
   });
-  
- /* $("#from").change(function() {
-  	var $value = $(this).val();
-   	if ($.isNumeric($value) == false) {
-	   	$(this).addClass('warning');
-	   	var $message = "Debe ser un valor numérico";
-	   	var $error = true;
-	   	error($error, $message);
-   	} else {
-   		if ($value > $("#to").val()) {
-   			$(this).addClass('warning');
-	   		var $message = "El campo DE no debe ser mayor que A";
-	   		var error = true;
-	   		error($error, $message);
-   		} else {
-   			$(this).removeClass("warning");
-	   		var $message = "";
-	   		var $error = false;
-	   		error($error, $message);
-   		}
-   	}
-  });*/
+
+  $("#from").on("change", function() {
+  		var val = $(this).val()
+  		$("#to").attr("min", val);
+  });
+
+  $("#to").on("change", function() {
+  		var val = $(this).val()
+  		$("#from").attr("max", val);
+  });
 });
 
 </script>
@@ -334,10 +337,10 @@ $(document).ready(function(){
 <form id="generador">
 	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required /> 
   a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required /><br />
-  Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" /><br />
-  Repetir <input name="times" type="number" id="times" value="" size="2" maxlength="2" required min="1" /> veces <br /><br />
+  Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" max="10" /><br />
+  Repetir <input name="times" type="number" id="times" value="" size="2" maxlength="2" required min="1" max="10" /> veces <br /><br />
   <h2>Impresión</h2>
-  Tickets por hoja  <input name="tickets_hoja" type="text" id="tickets_hoja" value="" size="2" maxlength="2" min="1" required /><br />
+  Tickets por hoja  <input name="tickets_hoja" type="number" id="tickets_hoja" value="" size="2" maxlength="2" min="1" max="100" required /><br />
   Número final de hojas (redondeado hacia arriba): <b id="hojas"></b><br /><br />
   <input type="checkbox" name="formatted" id="formatted" value="true">XML con formato<br />
   <span class="explanation">Necesario para que haya line breaks en inDesign</span><br />
