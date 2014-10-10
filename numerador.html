@@ -341,10 +341,10 @@ function load(vals) {
 
 $(document).ready(function(){
   
- $("#generador").on('submit', function() {
+ $("#generador").on('submit', function(event) {
      event.preventDefault();
-	values = getForm(values);
-	var lastGenerated = generateXML(values);
+	values = getForm();
+	generateXML(values);
 	$("#submitForm").val("Generar XML");
 	$("input[type=number]").removeClass("warning");
 	return lastGenerated;
