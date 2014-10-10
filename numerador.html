@@ -365,7 +365,7 @@ $("#downloadFile").on("click", function() {
 		saveAs(blob, $("#filename").val());
 	});
 
-$("input[type=number], input[type=checkbox]").on("change", function(){
+$("input[type=number], input[type=checkbox]").on("change focusout keyup input", function(){
 	var $lastGenerated = jQuery.parseJSON($("#lastGenerated").val());
 
 console.log($lastGenerated);
