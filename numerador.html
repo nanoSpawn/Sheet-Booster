@@ -47,13 +47,14 @@
 		-webkit-border-radius: 5px;
 		-moz-border-radius: 5px;
 		border-radius: 5px;
-		animation: 1s;
+		transition: 1s;
 	}
 	
 	input[type=submit], #downloadFile {
 		cursor: pointer;
 		background-color: buttonface;
 		width: auto;
+		transition: 1s;
 	}
 
 	input[type=submit]:active, #downloadFile:active {
@@ -194,6 +195,7 @@
 
 var defaultValues = '{"from":"1", "to":"100", "numberLength":"5", "times":"2", "paged":false, "formatted":true, "fileName":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
 var values = jQuery.parseJSON(defaultValues);
+var defaults = values;
 
 // Function that fills the form elements with the current values
 // Starting with default hardcoded values
@@ -217,7 +219,8 @@ function fillForm(values) {
 }
 
 // Gets the form current values, returns an object
-function getForm(values) {
+function getForm() {
+  var values = defaults;
   values.from = $("#from").val();
   values.to = $("#to").val();
   values.numberLength = $("#length").val();
@@ -298,6 +301,7 @@ function generateXML(values) {
   $xml = $xml + "</xml>";
   
    $("#resultadoXML").val($xml);
+   $("#lastGenerated").val(JSON.stringify(values));
 
   	var end = new Date().getTime();
 	var time = end - start;
@@ -322,18 +326,28 @@ function refreshCalculatedData(values) { // Simply prints the useful data
 	$("#ntt").text(total_tickets);
 }
 
-$(document).ready(function(){
+function compareForm() {
+  if (JSON.stringify(getForm()) == $("#lastGenerated").val()) {
+    return true
+  } else {
+    return false;
+  }
+}
 
-  fillForm(values);
-  generateXML(values);
-  var capturedValues = getForm(values);
+function load(vals) {
+  fillForm(vals);
+  var lastGenerated = generateXML(vals);
+}
+
+$(document).ready(function(){
   
-  $("#generador").on('submit', function() {
+ $("#generador").on('submit', function() {
      event.preventDefault();
 	values = getForm(values);
-	generateXML(values);
+	var lastGenerated = generateXML(values);
 	$("#submitForm").val("Generar XML");
 	$("input[type=number]").removeClass("warning");
+	return lastGenerated;
   });
 
   $("#from").on("change", function() {
@@ -351,12 +365,21 @@ $("#downloadFile").on("click", function() {
 		saveAs(blob, $("#filename").val());
 	});
 
-$("input[type=number]").on("change", function(){
-	var tempValues = getForm(capturedValues);
+$("input[type=number], input[type=checkbox]").on("change", function(){
+	var $lastGenerated = jQuery.parseJSON($("#lastGenerated").val());
+
+console.log($lastGenerated);
+	
+	var tempValues = defaults;
+	console.log(tempValues);
 	refreshCalculatedData(tempValues);
+	if (!compareForm(lastGenerated)) {
 	$("#submitForm").val("Valores cambiados!! Volver a generar el XML!!!!");
-	$("input[type=number]").addClass("warning");
-})
+	$("input[type=number], input[type=checkbox]").addClass("warning"); } else {
+	  $("#submitForm").val("Generar XML");
+	$("input[type=number], input[type=checkbox]").removeClass("warning");
+	}
+});
 });
 
 </script>
@@ -365,7 +388,7 @@ $("input[type=number]").on("change", function(){
 
 
 
-<body style="font-family: Helvetica, sans-serif;">
+<body style="font-family: Helvetica, sans-serif;" onLoad="load(defaults)">
 <div id="container">
 <div id="formularies">
 <h1>Numeración alzada de tickets</h1>
@@ -386,42 +409,20 @@ $("input[type=number]").on("change", function(){
   <span class="explanation">Para separar el XML también por páginas</span><br /><br />
   <input id="submitForm" type="submit" value="Generar XML" /><br /><br />
   <span id="error"></span>
+  
+  <input type="hidden" value="" id="lastGenerated" name="lastGenerated" />
 
 </p>
 
 <h2>Descarga de fichero con XML generado</h2>
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
 Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required pattern="([^\s]+(\.(?i)(xml))$)" /><br /><br />
-<!-- <p id="downloadify">
-				<i>You must have Flash 10 installed to download this file.</i>
-			</p> -->
 <a id="downloadFile">¡Descargar!</a>
 			
 
 
 </form>
 
-<script type="text/javascript">
-		/*	function load(){
-				Downloadify.create('downloadify',{
-					filename: function(){
-						return document.getElementById('filename').value;
-					},
-					data: function(){ 
-						return document.getElementById('resultadoXML').value;
-					},
-					onComplete: function(){ alert('¡Archivo guardado!'); },
-					onCancel: function(){ alert('Descarga cancelada.'); },
-					onError: function(){ alert('El contenido del fichero no puede ser nulo.'); },
-					swf: 'media/downloadify.swf',
-					downloadImage: 'images/download.png',
-					width: 100,
-					height: 18,
-					transparent: true,
-					append: false
-				});
-			} */
-		</script>
 	</div>
 
 <div id="results">
