@@ -69,8 +69,8 @@
 	textarea {
 		width: 380px;
 		max-width: 380px;
-		max-height: 450px;
-		height: 450px;
+		max-height: 350px;
+		height: 350px;
 	}
 
 	#length, #times, #tickets_hoja {
@@ -253,7 +253,8 @@ function generateXML(values) {
   var numberOfElements = total_tickets * values.times; // Total number of elements in the XML
   var hojas = Math.ceil(total_tickets / values.tickets_hoja); // Total number of sheets
   	$("#hojas").text(hojas);
-	$("#numberOfElements").text(numberOfElements);	
+	$("#numberOfElements").text(numberOfElements);
+	$("#ntt").text(total_tickets);
   
   
   if (values.formatted) { // Sets the line break if formatted is true
@@ -303,6 +304,7 @@ function generateXML(values) {
 }
 
 function pad (str, max) { //Function that adds zeroes to the left of the number
+  if (str < 0) { str = str * -1}; // In case we input a negative number, we'll strip the minus
   str=str.toString(); 
   function main(str,max){ 
     return str.length < max ? main("0" + str, max) : str; } 
@@ -316,6 +318,7 @@ function refreshCalculatedData(values) { // Simply prints the useful data
 	
 	$("#hojas").text($hojas);
 	$("#numberOfElements").text($numberOfElements);	
+	$("#ntt").text(total_tickets);
 }
 
 $(document).ready(function(){
@@ -358,12 +361,13 @@ $("#downloadFile").on("click", function() {
 <h2>Generador de números</h2>
 
 <form id="generador">
-	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required /> 
-  a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required /><br />
-  Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" max="10" /><br />
-  Repetir <input name="times" type="number" id="times" value="" size="2" maxlength="2" required min="1" max="10" /> veces <br /><br />
+	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required  step="1" /> 
+  a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required  step="1" />
+  <span class="explanation">Número total de tickets: <span id="ntt"></span></span><br /> <br />
+  Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" max="10" step="1" /><br />
+  Repetir <input name="times" type="number" id="times" value="" size="2" maxlength="2" required min="1" max="10"  step="1"/> veces <br /><br />
   <h2>Impresión</h2>
-  Tickets por hoja  <input name="tickets_hoja" type="number" id="tickets_hoja" value="" size="2" maxlength="2" min="1" max="100" required /><br />
+  Tickets por hoja  <input name="tickets_hoja" type="number" id="tickets_hoja" value="" size="2" maxlength="2" min="1" max="100" step="1" required /><br />
   Número final de hojas (redondeado hacia arriba): <b id="hojas"></b><br /><br />
   <input type="checkbox" name="formatted" id="formatted" value="true">XML con formato<br />
   <span class="explanation">Necesario para que haya line breaks en inDesign</span><br />
