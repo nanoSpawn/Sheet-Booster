@@ -119,6 +119,31 @@
 		border-radius: 10px;
 	}
 	
+	#instructions {
+		display: block;
+		position: absolute;
+		width: 700px;
+		height: auto;
+		min-height: 400px;
+		left: 50%;
+		margin-left: -375px;
+		padding: 30px;
+		z-index: 400;
+		background-color: #f4f4f4;
+		color: #444;
+		font-weight: normal;
+		font-size: .8em;
+		line-height: 1.2em;
+		
+		-webkit-box-shadow: 0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-moz-box-shadow:    0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		box-shadow:         0px 0px 30px 3px rgba(0, 0, 0, 0.75);
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+
+	}
+	
 	#formularies {
 		width: 400px;
 		z-index: 10;
@@ -173,6 +198,17 @@
 
 		#container {
 			width: 460px;
+		}
+		
+		#instructions {
+			width: 400px;
+			padding: 15px;
+			margin-left: -215px;
+			top: 40px;
+		}
+		
+		#instructions img {
+			width: 360px;
 		}
 
 		#results {
@@ -435,5 +471,24 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
   <textarea name="resultadoXML" cols="60" rows="25" readonly id="resultadoXML"></textarea>
 </p><span class="time"></span></form></div>
 </div>
+<div id="instructions">
+	<img src="http://www.muntanercomunicacio.com/images/montados.png" alt="Hojas impresas y apiladas" width="340" height=""/>
+	<img src="http://www.muntanercomunicacio.com/images/apilados.png" alt="Tickets cortados y ordenados" width="320" height=""/>
+	<div class="texto"><p>Este script sirve para crear la numeración para tickets que han de ir numerados (como tíckets de lotería, entradas para eventos, etc.) y que se imprimirán en pequeñas tiradas. Especialmente para máquinas digitales que no pueden numerar automáticamente.</p>
+	<p>Lo que hace es generar un XML con los números para cada página colocados para que, una vez apilemos las impresiones según salen de la impresora una encima de la otra, al cortar los tickets/entradas y apilar los montones resultantes uno encima del otro, queden todas las entradas perfectamente ordenadas</p>
+	<p>Los parámetros usados para crear los números son sencillos, se explican aquí en base a la muestra de arriba:</p>
+	<ul>
+		<li><b>De:</b> Primer número de la serie a numerar (1 en el ejemplo)</li>
+		<li><b>a:</b> Último número de la serie (16 en el ejemplo)</li>
+		<li><b>Longitud:</b> Longitud de cada cadena, se añadirán ceros para completar si fuera necesario (5 en el ejemplo)</li>
+		<li><b>Repetir:</b> Cuantas veces se repetirá el número en cada ticket (2 en el ejemplo)</li>
+		<li><b>Tickets por hoja:</b> Cuántos tickets salen en cada hoja (8 en el ejemplo)</li>
+		<li><b>Formato:</b> Si queremos un XML con saltos de línea, activar esta opción. Puede ser necesaria al importar el XML en inDesign u otros programas</li>
+		<li><b>Paginado:</b> Si para cada página de nuestro documento crearemos una caja "madre", en vez de usar la misma caja en todo el documento</li>
+		<li><b>Nombre de archivo:</b> Nombre de archivo a descargar</li>
+	</ul>
+	</div>
+</div>
+<div id="greyedOut"></div>
 </body>
 </html>
