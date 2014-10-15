@@ -34,7 +34,7 @@
 		background-repeat: repeat;
 	}
 	
-	input, textarea, #downloadFile {
+	input, textarea, #downloadFile, #close, #instrucciones {
 		width: 4em;
 		font-family: 'Asap', sans-serif;
 		font-size: 15px;
@@ -50,14 +50,14 @@
 		transition: 1s;
 	}
 	
-	input[type=submit], #downloadFile {
+	input[type=submit], #downloadFile, #close, #instrucciones {
 		cursor: pointer;
 		background-color: buttonface;
 		width: auto;
 		transition: 1s;
 	}
 
-	input[type=submit]:active, #downloadFile:active {
+	input[type=submit]:active, #downloadFile:active, #close:hover, #instrucciones:hover {
 		outline: #4D90FE;
 	}
 	input[type=checkbox] {
@@ -99,6 +99,8 @@
 		margin: 20px auto;
 		width: 920px;
 		vertical-align: middle;
+		z-index: 10;
+		overflow: auto;
 	}
 	
 	#formularies, #results {
@@ -117,11 +119,13 @@
 		-webkit-border-radius: 10px;
 		-moz-border-radius: 10px;
 		border-radius: 10px;
+		overflow: auto;
 	}
 	
 	#instructions {
-		display: block;
+		display: none;
 		position: absolute;
+		top: 20px;
 		width: 700px;
 		height: auto;
 		min-height: 400px;
@@ -143,6 +147,18 @@
 		border-radius: 10px;
 
 	}
+	
+	#grayedOut {
+			display: none;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			min-height: 700px;
+			opacity: .66;
+			z-index: 399;
+			background-color: #000;
+			top: 0;
+		}
 	
 	#formularies {
 		width: 400px;
@@ -169,7 +185,15 @@
 		font-size: .8em;
 		color: #aaa;
 	}
-
+	
+	#close {
+		display: block;
+		position: absolute;
+		right: 15px;
+		top: 15px;
+		z-index: 1000;
+	}
+	
 	#error {
 		display: none;
 		padding: 10px;
@@ -205,6 +229,12 @@
 			padding: 15px;
 			margin-left: -215px;
 			top: 40px;
+			z-index: 400;
+		}
+		
+		#grayedOut {
+			min-height: 1280px;
+			height: 100%;
 		}
 		
 		#instructions img {
@@ -212,14 +242,17 @@
 		}
 
 		#results {
+			display: block;
+			position: relative;
 			padding-left: 30px;
-			margin-left: 0;
-			margin: 20px 0 0 0;
+			padding-top: 50px;
+			margin: -30px 0 0 0;
 			float: none;
+			overflow: auto;
 		}
 
 		#formularies {
-			margin: 0 0 20px 0;
+			margin: 0 0 -40px 0;
 		}
 	}
 
@@ -405,16 +438,35 @@ $("input[type=number], input[type=checkbox]").on("change focusout keyup input", 
 
 console.log($lastGenerated);
 	
-	var tempValues = defaults;
-	console.log(tempValues);
-	refreshCalculatedData(tempValues);
-	if (!compareForm(lastGenerated)) {
-	$("#submitForm").val("Valores cambiados!! Volver a generar el XML!!!!");
-	$("input[type=number], input[type=checkbox]").addClass("warning"); } else {
-	  $("#submitForm").val("Generar XML");
-	$("input[type=number], input[type=checkbox]").removeClass("warning");
-	}
-});
+		var tempValues = defaults;
+		console.log(tempValues);
+		refreshCalculatedData(tempValues);
+		if (!compareForm(lastGenerated)) {
+		$("#submitForm").val("Valores cambiados!! Volver a generar el XML!!!!");
+		$("input[type=number], input[type=checkbox]").addClass("warning"); } else {
+		  $("#submitForm").val("Generar XML");
+		$("input[type=number], input[type=checkbox]").removeClass("warning");
+		}
+	});
+	
+	$("#instrucciones").on('click', function(event) {
+		$("#grayedOut").fadeIn('fast');
+		$("#instructions").fadeIn('normal');	
+	});
+	
+	$("#close").on('click', function(event) {
+		$("#grayedOut").fadeOut('fast');
+		$("#instructions").fadeOut('normal');	
+	});
+	
+	$(document).keyup(function(e) {
+		if (e.keyCode == 27) {
+			$("#grayedOut").fadeOut('fast');
+			$("#instructions").fadeOut('normal');
+		}   // esc
+	});
+	
+	
 });
 
 </script>
@@ -453,6 +505,7 @@ console.log($lastGenerated);
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
 Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required pattern="([^\s]+(\.(?i)(xml))$)" /><br /><br />
 <a id="downloadFile">¡Descargar!</a>
+<a id="instrucciones">¿Para qué sirve todo esto?</a>
 			
 
 
@@ -472,6 +525,7 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 </p><span class="time"></span></form></div>
 </div>
 <div id="instructions">
+	<a id="close">X</a>
 	<img src="http://www.muntanercomunicacio.com/images/montados.png" alt="Hojas impresas y apiladas" width="340" height=""/>
 	<img src="http://www.muntanercomunicacio.com/images/apilados.png" alt="Tickets cortados y ordenados" width="320" height=""/>
 	<div class="texto"><p>Este script sirve para crear la numeración para tickets que han de ir numerados (como tíckets de lotería, entradas para eventos, etc.) y que se imprimirán en pequeñas tiradas. Especialmente para máquinas digitales que no pueden numerar automáticamente.</p>
@@ -489,6 +543,6 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 	</ul>
 	</div>
 </div>
-<div id="greyedOut"></div>
+<div id="grayedOut"></div>
 </body>
 </html>
