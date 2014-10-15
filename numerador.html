@@ -33,7 +33,7 @@
 		background-image: url('images/pattern-djwn.png');
 		background-repeat: repeat;
 	}
-	
+
 	input, textarea, #downloadFile, #close, #instrucciones {
 		width: 4em;
 		font-family: 'Asap', sans-serif;
@@ -49,7 +49,7 @@
 		border-radius: 5px;
 		transition: 1s;
 	}
-	
+
 	input[type=submit], #downloadFile, #close, #instrucciones {
 		cursor: pointer;
 		background-color: buttonface;
@@ -84,14 +84,14 @@
 		line-height: 1em;
 		color: #660033;
 		width: 100%;
-		border-bottom: solid 1px #ccc;	
+		border-bottom: solid 1px #ccc;
 	}
 
 	h2 {
 		font-family: 'Bree Serif', serif;
 		font-size: 1.2em;
 		color: #666;
-		border-bottom: none;	
+		border-bottom: none;
 	}
 
 	#container {
@@ -102,7 +102,7 @@
 		z-index: 10;
 		overflow: auto;
 	}
-	
+
 	#formularies, #results {
 		display: block;
 		position: relative;
@@ -121,7 +121,7 @@
 		border-radius: 10px;
 		overflow: auto;
 	}
-	
+
 	#instructions {
 		display: none;
 		position: absolute;
@@ -138,7 +138,7 @@
 		font-weight: normal;
 		font-size: .8em;
 		line-height: 1.2em;
-		
+
 		-webkit-box-shadow: 0px 0px 30px 3px rgba(0, 0, 0, 0.75);
 		-moz-box-shadow:    0px 0px 30px 3px rgba(0, 0, 0, 0.75);
 		box-shadow:         0px 0px 30px 3px rgba(0, 0, 0, 0.75);
@@ -147,19 +147,19 @@
 		border-radius: 10px;
 
 	}
-	
+
 	#grayedOut {
 			display: none;
-			position: absolute;
+			position: fixed;
 			width: 100%;
-			height: 100%;
-			min-height: 700px;
+			/*height: 100%;
+			min-height: 700px;*/
 			opacity: .66;
 			z-index: 399;
 			background-color: #000;
 			top: 0;
 		}
-	
+
 	#formularies {
 		width: 400px;
 		z-index: 10;
@@ -169,7 +169,7 @@
 	margin-left: -100px;
 	padding-left: 130px;
 	z-index: 1;
-		
+
 	}
 
 	.time {
@@ -185,7 +185,7 @@
 		font-size: .8em;
 		color: #aaa;
 	}
-	
+
 	#close {
 		display: block;
 		position: absolute;
@@ -193,7 +193,7 @@
 		top: 15px;
 		z-index: 1000;
 	}
-	
+
 	#error {
 		display: none;
 		padding: 10px;
@@ -218,12 +218,12 @@
 		box-shadow:         inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
 	}
 
-	@media (max-width: 900px) {
+	@media screen and ( max-width: 900px ) {
 
 		#container {
 			width: 460px;
 		}
-		
+
 		#instructions {
 			width: 400px;
 			padding: 15px;
@@ -231,12 +231,12 @@
 			top: 40px;
 			z-index: 400;
 		}
-		
+
 		#grayedOut {
-			min-height: 1280px;
-			height: 100%;
+			/*min-height: 1280px;
+			height: 100%;*/
 		}
-		
+
 		#instructions img {
 			width: 360px;
 		}
@@ -246,7 +246,7 @@
 			position: relative;
 			padding-left: 30px;
 			padding-top: 50px;
-			margin: -30px 0 0 0;
+			margin: 0;
 			float: none;
 			overflow: auto;
 		}
@@ -296,7 +296,7 @@ function getForm() {
   values.times = $("#times").val();
   values.fileName = $("#filename").val();
   values.tickets_hoja = $("#tickets_hoja").val();
-  
+
   if ($("#paged").prop("checked")) {
     values.paged = true;
   }
@@ -309,7 +309,7 @@ function getForm() {
   else {
     values.formatted = false;
   }
-  
+
   return values;
 }
 
@@ -317,31 +317,31 @@ function getForm() {
 // Function that generates the XML from the specified values, passed via an object
 function generateXML(values) {
 
-  
+
   var start = new Date().getTime(); // To calculate time
   $("#hojas").text("");
-	$("#numberOfElements").text("");	
- 
+	$("#numberOfElements").text("");
+
   var total_tickets = values.to - values.from + 1; // Total number of tickets to print
   var numberOfElements = total_tickets * values.times; // Total number of elements in the XML
   var hojas = Math.ceil(total_tickets / values.tickets_hoja); // Total number of sheets
   	$("#hojas").text(hojas);
 	$("#numberOfElements").text(numberOfElements);
 	$("#ntt").text(total_tickets);
-  
-  
+
+
   if (values.formatted) { // Sets the line break if formatted is true
       var $lb = "\n";
   } else {
       var $lb = "";
   }
-  
+
   var $xml = '<?xml version="1.0"?>' + $lb + '<Root>' + $lb;
-  
+
   if (!values.paged) { // If we don't want pages, tree will be Root->xml->n
    $xml = $xml + "<xml>" + $lb;
   }
-  
+
   for (var $h = 1; $h <= hojas; $h++ ) { // iterating through the sheets
     if (values.paged) {
       $xml=$xml + '<page number="' + $h + '">' + $lb;
@@ -350,7 +350,7 @@ function generateXML(values) {
 	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
 	    var $j = $h + (values.from -1) + (hojas * $i);
 	    if ($j > values.to) { // scrap calculated numbers bigger than the one in the "to" textbox
-	    	$j = " "; 
+	    	$j = " ";
 	    } else {
 	    	$j = pad($j, values.numberLength); //add zeroes
 	    }
@@ -361,13 +361,13 @@ function generateXML(values) {
       $xml=$xml + "</page>" + $lb;
     }
   }
-  
+
   if (!values.paged) { // Closing tags if needed to.
     $xml = $xml + "</xml>" + $lb;
    }
-  
+
   $xml = $xml + "</Root>";
-  
+
    $("#resultadoXML").val($xml);
    $("#lastGenerated").val(JSON.stringify(values));
 
@@ -378,19 +378,19 @@ function generateXML(values) {
 
 function pad (str, max) { //Function that adds zeroes to the left of the number
   if (str < 0) { str = str * -1}; // In case we input a negative number, we'll strip the minus
-  str=str.toString(); 
-  function main(str,max){ 
-    return str.length < max ? main("0" + str, max) : str; } 
-    return main(str,max); 
+  str=str.toString();
+  function main(str,max){
+    return str.length < max ? main("0" + str, max) : str; }
+    return main(str,max);
    }
 
 function refreshCalculatedData(values) { // Simply prints the useful data
 	var total_tickets = values.to - values.from + 1; // Total number of tickets to print
 	var $numberOfElements = total_tickets * values.times; // Total number of elements in the XML
 	var $hojas = Math.ceil(total_tickets / values.tickets_hoja); // Total number of sheets
-	
+
 	$("#hojas").text($hojas);
-	$("#numberOfElements").text($numberOfElements);	
+	$("#numberOfElements").text($numberOfElements);
 	$("#ntt").text(total_tickets);
 }
 
@@ -408,7 +408,13 @@ function load(vals) {
 }
 
 $(document).ready(function(){
-  
+
+    $("#grayedOut").height($(window).height());
+
+    $(window).resize(function () {
+        $("#grayedOut").height($(this).height());
+    });
+
  $("#generador").on('submit', function(event) {
      event.preventDefault();
 	values = getForm();
@@ -437,7 +443,7 @@ $("input[type=number], input[type=checkbox]").on("change focusout keyup input", 
 	var $lastGenerated = jQuery.parseJSON($("#lastGenerated").val());
 
 console.log($lastGenerated);
-	
+
 		var tempValues = defaults;
 		console.log(tempValues);
 		refreshCalculatedData(tempValues);
@@ -448,29 +454,29 @@ console.log($lastGenerated);
 		$("input[type=number], input[type=checkbox]").removeClass("warning");
 		}
 	});
-	
+
 	$("#instrucciones").on('click', function(event) {
 		$("#grayedOut").fadeIn('fast');
-		$("#instructions").fadeIn('normal');	
+		$("#instructions").fadeIn('normal');
 	});
-	
+
 	$("#close").on('click', function(event) {
 		$("#grayedOut").fadeOut('fast');
-		$("#instructions").fadeOut('normal');	
+		$("#instructions").fadeOut('normal');
 	});
-	
+
 	$(document).keyup(function(e) {
 		if (e.keyCode == 27) {
 			$("#grayedOut").fadeOut('fast');
 			$("#instructions").fadeOut('normal');
 		}   // esc
 	});
-	
-	
+
+
 });
 
 </script>
-	
+
 </head>
 
 
@@ -482,7 +488,7 @@ console.log($lastGenerated);
 <h2>Generador de números</h2>
 
 <form id="generador">
-	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required  step="1" /> 
+	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required  step="1" />
   a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required  step="1" />
   <span class="explanation">Número total de tickets: <span id="ntt"></span></span><br /> <br />
   Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" max="10" step="1" /><br />
@@ -496,7 +502,7 @@ console.log($lastGenerated);
   <span class="explanation">Para separar el XML también por páginas</span><br /><br />
   <input id="submitForm" type="submit" value="Generar XML" /><br /><br />
   <span id="error"></span>
-  
+
   <input type="hidden" value="" id="lastGenerated" name="lastGenerated" />
 
 </p>
@@ -506,7 +512,7 @@ console.log($lastGenerated);
 Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required pattern="([^\s]+(\.(?i)(xml))$)" /><br /><br />
 <a id="downloadFile">¡Descargar!</a>
 <a id="instrucciones">¿Para qué sirve todo esto?</a>
-			
+
 
 
 </form>
