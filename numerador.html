@@ -297,8 +297,7 @@ function generateXML(values) {
     $xml = $xml + "</xml>" + $lb;
    }
   
-  $xml = $xml + "</Root>" + $lb;
-  $xml = $xml + "</xml>";
+  $xml = $xml + "</Root>";
   
    $("#resultadoXML").val($xml);
    $("#lastGenerated").val(JSON.stringify(values));
