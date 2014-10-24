@@ -78,6 +78,18 @@
 	#length, #times, #tickets_hoja {
 		width: 2em;
 	}
+	
+	#ntt {
+		color: #aaa;
+		background: transparent;
+		font-weight: normal !important;
+	}
+	
+	#ntt:hover {
+		color: #444;
+		background: white;
+	}
+	
 	h1 {
 		font-family: 'Bree Serif', serif;
 		font-size: 1.7em;
@@ -327,7 +339,7 @@ function generateXML(values) {
   var hojas = Math.ceil(total_tickets / values.tickets_hoja); // Total number of sheets
   	$("#hojas").text(hojas);
 	$("#numberOfElements").text(numberOfElements);
-	$("#ntt").text(total_tickets);
+	$("#ntt").val(total_tickets);
 
 
   if (values.formatted) { // Sets the line break if formatted is true
@@ -374,6 +386,9 @@ function generateXML(values) {
   	var end = new Date().getTime();
 	var time = end - start;
 	$(".time").text("Tiempo usado para generar el XML: "+ time + " ms.");
+	
+	var $file_size = (lengthInUtf8Bytes($xml) / 1024).toFixed(2);
+	$("#file_size").text($file_size);
 }
 
 function pad (str, max) { //Function that adds zeroes to the left of the number
@@ -407,6 +422,12 @@ function load(vals) {
   var lastGenerated = generateXML(vals);
 }
 
+function lengthInUtf8Bytes(str) {
+  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+  var m = encodeURIComponent(str).match(/%[89ABab]/g);
+  return str.length + (m ? m.length : 0);
+}
+
 $(document).ready(function(){
 
     $("#grayedOut").height($(window).height());
@@ -427,11 +448,20 @@ $(document).ready(function(){
   $("#from").on("change", function() {
   		var val = $(this).val()
   		$("#to").attr("min", val);
+  		$("#ntt").val($("#to").val()-$("#from").val()+1);
   });
 
   $("#to").on("change", function() {
   		var val = $(this).val()
   		$("#from").attr("max", val);
+  		$("#ntt").val($("#to").val()-$("#from").val()+1);
+  		
+  });
+  
+ $("#ntt").on("keyup input", function() {
+  		var val = parseInt($(this).val()); // If I don't parse integers, it concatenates strings!!
+  		val = +$("#from").val() + val - 1;
+  		$("#to").val(val);
   });
 
 $("#downloadFile").on("click", function() {
@@ -442,10 +472,12 @@ $("#downloadFile").on("click", function() {
 $("input[type=number], input[type=checkbox]").on("change focusout keyup input", function(){
 	var $lastGenerated = jQuery.parseJSON($("#lastGenerated").val());
 
-console.log($lastGenerated);
+		//console.log($lastGenerated);
+		
+		
 
 		var tempValues = defaults;
-		console.log(tempValues);
+		//console.log(tempValues);
 		refreshCalculatedData(tempValues);
 		if (!compareForm(lastGenerated)) {
 		$("#submitForm").val("Valores cambiados!! Volver a generar el XML!!!!");
@@ -489,8 +521,8 @@ console.log($lastGenerated);
 
 <form id="generador">
 	<p>De <input name="from" type="number" id="from" value="" size="10" maxlength="10" required  step="1" />
-  a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required  step="1" />
-  <span class="explanation">Número total de tickets: <span id="ntt"></span></span><br /> <br />
+  a <input name="to" type="number" id="to" value="" size="10" maxlength="10" required  step="1" /><br />
+  <span class="explanation">Número total de tickets: <input type="number" id="ntt" name="ntt" value="" size="10" maxlength="10" step="1" /></span><br /> <br />
   Longitud <input name="length" type="number" id="length" value="" size="2" maxlength="2" required min="1" max="10" step="1" /><br />
   Repetir <input name="times" type="number" id="times" value="" size="2" maxlength="2" required min="1" max="10"  step="1"/> veces <br /><br />
   <h2>Impresión</h2>
@@ -523,6 +555,7 @@ Nombre del archivo a descargar: <input type="text" value="" id="filename" name="
 <form>
 
 <p><strong>XML generado        </strong> Nº de elementos: <span id="numberOfElements"></span></p>
+<p>Tamaño del archivo (valor aproximado): <span id="file_size"></span> KB</p>
 <span class="explanation">Último XML generado, puedes hacer copy paste o guardarlo en archivo</span>
 
 <p>
