@@ -351,12 +351,12 @@ function generateXML(values) {
   var $xml = '<?xml version="1.0"?>' + $lb + '<Root>' + $lb;
 
   if (!values.paged) { // If we don't want pages, tree will be Root->xml->n
-   $xml = $xml + "<xml>" + $lb;
+   $xml = $xml + "<xml>";
   }
 
   for (var $h = 1; $h <= hojas; $h++ ) { // iterating through the sheets
     if (values.paged) {
-      $xml=$xml + '<page number="' + $h + '">' + $lb;
+      $xml = $xml + '<page number="' + $h + '">';
     }
     for (var $i = 0; $i < values.tickets_hoja; $i++) { // iterating through tickets
 	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
