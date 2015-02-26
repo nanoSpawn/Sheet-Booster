@@ -1,4 +1,4 @@
-Sheet-Booster
+Sheet-Booster 1.0
 =============
 
 PHP script to generate an XML of numbers ready to ease up digital printing of numbered tickets.
