@@ -1,4 +1,4 @@
-Sheet-Booster v1.6
+Sheet-Booster v1.7
 =============
 
 Script to generate an XML of numbers ready to ease up digital printing of numbered tickets.
@@ -17,6 +17,11 @@ The javascript based numerador.html, while being done to practice my rusty Javas
 And it no longer refreshes the page.
 
 <h2>Changelog</h2>
+
+
+<b>1.7</b>
+- [HTML] Added suffix.
+- [HTML] Added option for toggling zero padding. If disabled, the "lenght" field will be ignored.
 
 <b>1.6</b>
 - [HTML] Added prefix.
