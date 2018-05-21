@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -275,7 +274,7 @@
 <script type="text/javascript">
 //Defining default values for the form
 
-var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "prefix":"", "suffix":"", "fileName":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
+var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "inverted": false, "prefix":"", "suffix":"", "fileName":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
 var values = jQuery.parseJSON(defaultValues);
 var defaults = values;
 
@@ -304,6 +303,11 @@ if (values.zeropad) {
       $("#zeropad").attr("checked", true).val(true);
    } else {
       $("#zeropad").attr("checked", false).val(false);
+   }
+if (values.inverted) {
+      $("#inverted").attr("checked", true).val(true);
+   } else {
+      $("#inverted").attr("checked", false).val(false);
    }
 }
 
@@ -336,6 +340,12 @@ if ($("#zeropad").prop("checked")) {
   }
   else {
     values.zeropad = false;
+  }
+if ($("#inverted").prop("checked")) {
+    values.inverted = true;
+  }
+  else {
+    values.inverted = false;
   }
 
   return values;
@@ -376,8 +386,20 @@ function generateXML(values) {
     }
     for (var $i = 0; $i < values.tickets_hoja; $i++) { // iterating through tickets
 	  for (var $t = 1; $t <= values.times; $t++) { // repeating as many times as needed
-	    var $j = $h + (values.from -1) + (hojas * $i);
-	    if ($j > values.to) { // scrap calculated numbers bigger than the one in the "to" textbox
+        var scrapping = false; // For checking wether we'll scrap the generated number or not.
+        if (!values.inverted) {
+            var $j = $h + (values.from -1) + (hojas * $i);  
+        } else {
+            var $j = ((values.to) - $h - (hojas * $i)) +1 ;
+            
+            if ($j == 0 && values.from != 0 || $j < 0 ) {
+                // When inverted it runs into negative numbers, so if it drops
+                // belows 0 or if it's 0 and FROM isn't, this number will not be shown.
+                scrapping = true;
+            }
+        }
+          
+	    if ($j > values.to || scrapping) { // scrap calculated numbers bigger than the one in the "to" textbox
 	    	$j = " ";
 	    } else {
             if (values.zeropad) {
@@ -553,10 +575,12 @@ $("input[type=number], input[type=checkbox]").on("change focusout keyup input", 
   <input type="checkbox" name="paged" id="paged" value="true">XML paginado<br />
   <span class="explanation">Para separar el XML también por páginas</span><br />
   <input type="checkbox" name="zeropad" id="zeropad" value="true">Añadir ceros<br />
-  <span class="explanation">Si queremos que se rellenen los huecos con ceros (001 ó 1)</span><br /><br />
+  <span class="explanation">Si queremos que se rellenen los huecos con ceros (001 ó 1)</span><br />
+  <input type="checkbox" name="inverted" id="inverted" value="true">Invertir numeración<br />
+  <span class="explanation">Para sacar la numeración al revés, de 100 a 1 en vez de 1 a 100</span><br /><br />
   Prefijo <input name="prefix" type="text" id="prefix" value="" size="16" maxlength="16" />&nbsp;&nbsp;&nbsp;&nbsp;
   Sufijo <input name="suffix" type="text" id="suffix" value="" size="16" maxlength="16" /><br />
-  <span class="explanation">Por si necesitamos un prefijo antes de los números</span><br /><br />
+  <span class="explanation">Por si necesitamos un prefijo o sufijo antes o después de los números</span><br /><br />
   <input id="submitForm" type="submit" value="Generar XML" /><br /><br />
   <span id="error"></span>
   <input type="hidden" value="" id="lastGenerated" name="lastGenerated" />

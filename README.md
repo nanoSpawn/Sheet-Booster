@@ -1,4 +1,4 @@
-Sheet-Booster v1.7
+Sheet-Booster v1.71
 =============
 
 Script to generate an XML of numbers ready to ease up digital printing of numbered tickets.
@@ -18,6 +18,8 @@ And it no longer refreshes the page.
 
 <h2>Changelog</h2>
 
+<b>1.71</b>
+- [HTML] Added option for inverting the numbers. Just allowing the "to" field to be smaller than the "from" one was too cumbersome, a simple field makes things a lot cleaner.
 
 <b>1.7</b>
 - [HTML] Added suffix.
