@@ -224,7 +224,7 @@
 	}
 	.warning {
 	      font-weight: bold;
-	      color: red;
+	      color: red !important;
 	      -webkit-box-shadow: inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
 		-moz-box-shadow:    inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
 		box-shadow:         inset 0px 0px 5px 0px rgba(200, 0, 0, 0.35);
@@ -274,7 +274,7 @@
 <script type="text/javascript">
 //Defining default values for the form
 
-var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "inverted": false, "prefix":"", "suffix":"", "fileName":"numeros.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
+var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "inverted": false, "prefix":"", "suffix":"", "fileName":"1-100.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
 var values = jQuery.parseJSON(defaultValues);
 var defaults = values;
 
@@ -287,7 +287,7 @@ function fillForm(values) {
   $("#times").val(values.times);
   $("#prefix").val(values.prefix);
   $("#suffix").val(values.suffix);
-  $("#filename").val(values.fileName);
+  $("#filename").val(values.from+"-"+values.to+".xml");
   $("#tickets_hoja").val(values.tickets_hoja);
   if (values.paged) {
       $("#paged").attr("checked", true).val(true);
@@ -449,6 +449,16 @@ function refreshCalculatedData(values) { // Simply prints the useful data
 	$("#hojas").text($hojas);
 	$("#numberOfElements").text($numberOfElements);
 	$("#ntt").text(total_tickets);
+    
+    if (!values.inverted) {
+        console.log("No invertidos "+values.inverted);
+       $("#filename").val(values.from+"-"+values.to+".xml"); 
+        console.log();
+    } else {
+        console.log("Invertidos "+values.inverted);
+        $("#filename").val(values.to+"-"+values.from+".xml");
+    }
+    
 }
 
 function compareForm() {
@@ -590,7 +600,7 @@ $("input[type=number], input[type=checkbox]").on("change focusout keyup input", 
 
 <h2>Descarga de fichero con XML generado</h2>
 <span class="explanation">Recuerda generar el XML de nuevo si has cambiado algún dato</span><br />
-Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required pattern="([^\s]+(\.(?i)(xml))$)" /><br /><br />
+Nombre del archivo a descargar: <input type="text" value="" id="filename" name="filename" required  /><br /><br /> <!-- pattern="([^\s]+(\.(?i)(xml))$)" TODO Revisar esto-->
 <a id="downloadFile">¡Descargar!</a>
 <a id="instrucciones">¿Para qué sirve todo esto?</a>
 
