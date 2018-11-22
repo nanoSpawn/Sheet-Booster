@@ -1,4 +1,4 @@
-Sheet-Booster v1.72
+Sheet-Booster v1.73
 =============
 
 Script to generate an XML of numbers ready to ease up digital printing of numbered tickets.
@@ -17,6 +17,9 @@ The javascript based numerador.html, while being done to practice my rusty Javas
 And it no longer refreshes the page.
 
 <h2>Changelog</h2>
+
+<b>1.73</b>
+- [HTML] Now automatically changes the filename of the xml to be downloaded based on the set numbers, takes in account if those are inverted or not.
 
 <b>1.72</b>
 - [HTML] Small patch, moved the inverted toggle to the generator area, makes more sense there since it's related to generation, not to printing.
