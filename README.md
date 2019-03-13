@@ -1,4 +1,4 @@
-Sheet-Booster v1.73
+Sheet-Booster v1.74
 =============
 
 Script to generate an XML of numbers ready to ease up digital printing of numbered tickets.
@@ -17,6 +17,9 @@ The javascript based numerador.html, while being done to practice my rusty Javas
 And it no longer refreshes the page.
 
 <h2>Changelog</h2>
+
+<b>1.74</b>
+- [HTML] Added option to mark periods for the thousands, to print 1.000 instead of 1000 (spanish convention)
 
 <b>1.73</b>
 - [HTML] Now automatically changes the filename of the xml to be downloaded based on the set numbers, takes in account if those are inverted or not.

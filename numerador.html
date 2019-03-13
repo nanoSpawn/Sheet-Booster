@@ -274,7 +274,7 @@
 <script type="text/javascript">
 //Defining default values for the form
 
-var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "inverted": false, "prefix":"", "suffix":"", "fileName":"1-100.xml", "tickets_hoja":"10", "number_of_elements":"0"}';
+var defaultValues = '{"from":"1", "to":"100", "numberLength":"4", "times":"2", "paged":true, "formatted":true, "zeropad":true, "inverted": false, "prefix":"", "suffix":"", "fileName":"1-100.xml", "tickets_hoja":"10", "number_of_elements":"0", "periods":false }';
 var values = jQuery.parseJSON(defaultValues);
 var defaults = values;
 
@@ -308,6 +308,11 @@ if (values.inverted) {
       $("#inverted").attr("checked", true).val(true);
    } else {
       $("#inverted").attr("checked", false).val(false);
+   }
+if (values.periods) {
+      $("#periods").attr("checked", true).val(true);
+   } else {
+      $("#periods").attr("checked", false).val(false);
    }
 }
 
@@ -346,6 +351,12 @@ if ($("#inverted").prop("checked")) {
   }
   else {
     values.inverted = false;
+  }
+if ($("#periods").prop("checked")) {
+    values.periods = true;
+  }
+  else {
+    values.periods = false;
   }
 
   return values;
@@ -398,7 +409,6 @@ function generateXML(values) {
                 scrapping = true;
             }
         }
-          
 	    if ($j > values.to || scrapping) { // scrap calculated numbers bigger than the one in the "to" textbox
 	    	$j = " ";
 	    } else {
@@ -408,6 +418,10 @@ function generateXML(values) {
                 $j = values.prefix + $j + values.suffix; //add prefix and/or suffix, if any
             }
 	    }
+        
+        if ($j != " " && values.periods) {
+            $j = periods($j);
+        }
 	    $xml =  $xml + "<n" + $t + ">" + $j + "</n" + $t + ">" + $lb;
 	  }
     }
@@ -431,6 +445,14 @@ function generateXML(values) {
 	
 	var $file_size = (lengthInUtf8Bytes($xml) / 1024).toFixed(2);
 	$("#file_size").text($file_size);
+}
+
+function periods(x) { // Adds periods for marking "thousands" in the numbers.
+    console.log("Added periods");
+    if (x.length > 3) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    
 }
 
 function pad (str, max) { //Function that adds zeroes to the left of the number
@@ -588,7 +610,9 @@ $("input[type=number], input[type=checkbox]").on("change focusout keyup input", 
   <input type="checkbox" name="paged" id="paged" value="true">XML paginado<br />
   <span class="explanation">Para separar el XML también por páginas</span><br />
   <input type="checkbox" name="zeropad" id="zeropad" value="true">Añadir ceros<br />
-  <span class="explanation">Si queremos que se rellenen los huecos con ceros (001 ó 1)</span><br /><br />
+  <span class="explanation">Si queremos que se rellenen los huecos con ceros (001 ó 1)</span><br />
+  <input type="checkbox" name="periods" id="periods" value="false">Añadir puntos<br />
+  <span class="explanation">Para marcar los puntos en los decimales</span><br /><br />
   Prefijo <input name="prefix" type="text" id="prefix" value="" size="16" maxlength="16" />&nbsp;&nbsp;&nbsp;&nbsp;
   Sufijo <input name="suffix" type="text" id="suffix" value="" size="16" maxlength="16" /><br />
   <span class="explanation">Por si necesitamos un prefijo o sufijo antes o después de los números</span><br /><br />
